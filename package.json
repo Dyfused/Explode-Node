@@ -1,0 +1,12 @@
+{
+    "name": "explode",
+    "description": "A community server for Dynamite.",
+    "authors": "Taskeren",
+    "version": "1.0.0",
+    "main": "app.js",
+    "dependencies": {
+        "express": "^4.18.1",
+        "express-graphql": "^0.12.0",
+        "graphql": "^16.5.0"
+    }
+}

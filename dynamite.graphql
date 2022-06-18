@@ -1,0 +1,367 @@
+scalar Date
+
+type Announcement {
+  _id: ID
+  userId: String
+  title: String
+  content: [String]
+  createTime: Date
+}
+
+# 游戏元数据
+type GameSetting {
+  appVer: Int
+  judgement: HpSetting
+}
+
+# ?
+type HpSetting {
+  perfect: Int
+  good: Int
+  miss: Int
+  maxHp: Int
+  startHp: Int
+}
+
+# 考级组数据
+#（包含多个考级谱）
+type AssessmentGroup {
+  _id: ID
+  name: String
+  assessment: [Assessment]
+}
+
+# 考级谱数据
+type Assessment {
+  _id: ID
+  medalLevel: Int
+  lifeBarLength: Float
+  normalPassAcc: Float
+  goldenPassAcc: Float
+  exMiss: Float
+  chart: [AssessmentChart]
+  assessmentRecord: [AssessmentRecord]
+}
+
+# 考级谱面信息
+type AssessmentChart {
+  _id: ID
+  set: ChartSet
+}
+
+# 综合考级游玩成绩
+type AssessmentRecord {
+  achievementRate: Float
+  isBest: Boolean
+  playRecord: [AssessmentPlayRecord]
+}
+
+# 谱面集合
+#（包含各种难度的谱面）
+type ChartSet {
+  _id: ID
+  introduction: String
+  coinPrice: Int
+  noter: ChartNoter
+  musicTitle: String
+  composerName: String
+  chart: [Chart]
+  isGot: Boolean
+  isRanked: Boolean
+  OverridePriceStr: String
+}
+
+# 谱面作者
+type ChartNoter {
+  username: String
+}
+
+# 谱面
+type Chart {
+  _id: ID
+  difficultyClass: Int
+  difficultyValue: Int
+}
+
+# 详细谱面信息
+type DetailedChart {
+  charter: User
+  chartName: String
+  gcPrice: Int
+  music: Music
+  difficultyBase: Int
+  difficultyValue: Int
+}
+
+# 音乐信息
+type Music {
+  _id: ID
+  musicName: String
+  musician: Musician
+}
+
+# 音乐家信息
+type Musician {
+  musicianName: String
+}
+
+# 用户信息
+type User {
+  _id: ID
+  username: String
+  ownChart: [String]
+  coworkChart: [String]
+  ownSet: [String]
+  follower: Int
+  coin: Int
+  diamond: Int
+  PPTime: String
+  token: String
+  RThisMonth: Int
+  access: UserAccess
+}
+
+# 用户权限信息
+type UserAccess {
+  reviewer: Boolean
+}
+
+# 单次考级游玩成绩
+type AssessmentPlayRecord {
+  perfect: Int
+  good: Int
+  miss: Int
+  score: Int
+}
+
+# 开始游玩前提交返回
+type BeforePlaySubmit {
+  PPTime: String
+  playingRecord: PlayingRecord
+}
+
+# ?
+type PlayingRecord {
+  randomId: String
+}
+
+# 游玩记录
+input PlayRecord {
+  mod: PlayMod
+  isAlive: Boolean
+  score: Int
+  perfect: Int
+  good: Int
+  miss: Int
+}
+
+# 游玩修饰
+type PlayMod {
+  narrow: Float
+  speed: Float
+  isBleed: Boolean
+  isMirror: Boolean
+}
+
+# 考级结束游玩后提交返回
+# （与普通游玩结束后返回数据不同！）
+type AssessmentAfterPlaySubmit {
+  result: Int
+  RThisMonth: Int
+  coin: Int
+  diamond: Int
+}
+
+# 结束游玩后提交返回
+# （与考级游玩结束后返回数据不同！）
+type AfterPlaySubmit {
+  ranking: Ranking
+  RThisMonth: Int
+  coin: Int
+  diamond: Int
+}
+
+# 更新段位
+type Ranking {
+  isPlayRankUpdated: Boolean
+  playRank: Rank
+}
+
+# 段位
+type Rank {
+  rank: Int
+}
+
+type AssessmentRecordWithRank {
+  player: Player
+  rank: Int
+  achievementRate: Float
+  result: Int
+  createTime: Date
+}
+
+type Player {
+  _id: ID
+  username: String
+  highestGoldenMedalLevel: Int
+  RThisMonth: Int
+}
+
+type ReviewRequest {
+  set: ChartSet
+  isUnranked: Boolean
+}
+
+type PlayRecordWithRank {
+  player: Player
+  mod: PlayMod
+  rank: Int
+  score: Int
+  perfect: Int
+  good: Int
+  miss: Int
+  createTime: Date
+}
+
+# exchangeSet 返回信息
+type Exchange {
+  coin: Int
+}
+
+input ChartSetAndVersion {
+    setId: String
+    version: Int
+}
+
+# refreshSet 返回值
+# （本身应该与 ChartSet 相同，但是因为 noterName 不存在于 ChartSet，所以单独拉出来）
+type Set {
+    _id: ID
+    isRanked: Boolean
+    introduction: String
+    noterName: String
+    musicTitle: String
+}
+
+type Query {
+  # 后端测试（非原生内容）
+  hello: String!
+
+  # 请求玩家自身
+  self: Self
+
+  # 请求 Reviewer 玩家自身
+  reviewer: Reviewer
+
+  # 已经拥有的谱子
+  ownOrGotChart: [DetailedChart]
+
+  # 游戏内公告（尚未启用）
+  announcement(limit: Int, skip: Int): [Announcement!]
+
+  # 游戏元数据
+  gameSetting: GameSetting!
+
+  # 考级数据
+  assessmentGroup(limit: Int, skip: Int): AssessmentGroup
+
+  # ?
+  assessmentRank(
+    assessmentGroupId: String
+    medalLevel: Int
+    skip: NonNegativeInt
+    limit: NonNegativeInt
+  ): [AssessmentRecordWithRank]
+
+  # 获取谱子（曲谱商店）
+  set(
+    playCountOrder: Int # {-1, 0}
+    publishTimeOrder: Int # {-1, 0}
+    limit: NonNegativeInt
+    skip: NonNegativeInt
+    isHidden: Int # {1(Hidden), -1(Other)}
+    musicTitle: String
+    isOfficial: Int # {1(Official), 0(Other)}
+    isRanked: Int # {1(Ranked), -1(Unranked), 0(Other)}
+  ): [ChartSet]
+
+  # 获取谱子列表
+  # （暂时不知道具体用在哪里）
+  charts(limit: Int, skip: Int, ranked: Int): [DetailedChart]
+
+  # ?
+  playRank(
+    chartId: String
+    skip: NonNegativeInt
+    limit: NonNegativeInt
+  ): [PlayRecordWithRank]
+
+  # ?
+  refreshSet(setVersion: [ChartSetAndVersion]): Set
+
+  # 根据 ID 获取谱子
+  setById(_id: String): ChartSet
+
+  # 根据用户名获取用户信息
+  userByUsername(username: String): User
+}
+
+type Mutation {
+  # 考级开始前提交
+  submitBeforeAssessment(
+    assessmentGroupId: ID
+    medalLevel: Int
+  ): BeforePlaySubmit
+
+  # 考级结束后提交
+  submitAfterAssessment(
+    playRecords: [PlayRecord]
+    randomId: String
+  ): AssessmentAfterPlaySubmit
+
+  # 游玩前提交
+  submitBeforePlay(
+    chartId: String
+    PPCost: Int
+    eventArgs: String
+  ): BeforePlaySubmit
+
+  # 游玩后提交成绩
+  submitAfterPlay(randomId: String, playRecord: PlayRecord): AfterPlaySubmit
+
+  # ?
+  purchaseChart(chartId: String): User
+
+  # ?
+  exchangeSet(setId: String): Exchange
+
+  # 登录
+  loginUser(username: String, password: String): User
+
+  # 注册
+  registerUser(username: String, password: String): User
+}
+
+type Self {
+  # 获取拥有的谱子
+  gotSet: [ChartSet]
+
+  # ?
+  assessmentRankSelf(
+    assessmentGroupId: String
+    medalLevel: Int
+  ): AssessmentRecordWithRank
+
+  # ?
+  playRankSelf(chartId: String): PlayRecordWithRank
+}
+
+type Reviewer {
+  # 获取需要 Review 的谱子
+  reviewRequest(
+    limit: Int
+    skip: Int
+    status: Int
+    searchStr: String
+  ): [ReviewRequest]
+}
