@@ -1,4 +1,5 @@
 scalar Date
+scalar NonNegativeInt
 
 type Announcement {
   _id: ID
@@ -147,12 +148,21 @@ type PlayingRecord {
 
 # 游玩记录
 input PlayRecord {
-  mod: PlayMod
+  mod: PlayModInput
   isAlive: Boolean
   score: Int
   perfect: Int
   good: Int
   miss: Int
+}
+
+# 游玩修饰
+# (因 GQL 限制，input 和 type 不能共存，所以 input 版本的 PlayMod 改称 PlayModInput)
+input PlayModInput {
+  narrow: Float
+  speed: Float
+  isBleed: Boolean
+  isMirror: Boolean
 }
 
 # 游玩修饰

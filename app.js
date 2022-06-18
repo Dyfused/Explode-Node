@@ -2,27 +2,11 @@ const express = require('express')
 const { buildSchema } = require('graphql')
 const { graphqlHTTP } = require('express-graphql')
 
+const fs = require('fs')
+
 const appVersion = "1.0.0"
 
-const schema = buildSchema(`
-
-    scalar Date
-
-    type Announcement {
-        _id: String,
-        userId: String
-        title: String
-        content: [String]
-        createTime: Date
-    }
-
-    type Query {
-        hello: String
-
-        announcement(limit: Int, skip: Int): [Announcement!]
-    }
-
-`)
+const schema = buildSchema(fs.readFileSync('dynamite.graphql').toString())
 
 const root = {
     hello: () => `Explode in Node v${appVersion}`,
