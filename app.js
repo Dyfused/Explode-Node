@@ -71,7 +71,7 @@ const root = {
         console.log(`S: ${soudayo}`) // todo: remove
         return {
             "reviewRequest": function({ limit, skip, status, searchStr }) {
-                return [fakeEntities.fakeReviewRequest1]
+                return skip < 1 ? [fakeEntities.fakeReviewRequest1] : []
             }
         }
     },
@@ -176,8 +176,8 @@ const root = {
 function contextFactory(req) {
     return {
         headers: req.headers,
-        soudayo: req.headers["X-SOUDAYO"],
-        version: req.headers["X-VERSION"]
+        soudayo: req.headers["x-soudayo"],
+        version: req.headers["x-version"]
     }
 }
 
@@ -198,6 +198,7 @@ expressDispatch.use('/download/cover/encoded/', express.static('data/cover'))
 expressDispatch.use('/download/music/encoded/', express.static('data/music'))
 expressDispatch.use('/download/chart/encoded/', express.static('data/chart'))
 expressDispatch.use('/download/preview/encoded/', express.static('data/preview'))
+expressDispatch.use('/download/avatar/256x256_jpg/', express.static('data/avatar'))
 expressDispatch.listen(10442)
 
 console.log("Dispatch Server Running at http://localhost:10442")

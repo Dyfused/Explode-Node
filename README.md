@@ -18,8 +18,9 @@ Dynamite 使用 GraphQL 作为其后端接口，本项目整理了所有已知�
 - 封面：<https://dynamite.tunergames.com/download/cover/encoded/{setId}>
 - 预览：<https://dynamite.tunergames.com/download/preview/encoded/{setId}>
 - 铺面：<https://dynamite.tunergames.com/download/chart/encoded/{chartId}>
+- 用户头像：<https://dynamite.tunergames.com/download/avatar/256x256_jpg/{userId}>
 
-其中 `setId` 为 `ChartSet` 的 `_id` 字段；`chartId` 为 `Chart` 的 `_id` 字段。
+其中 `setId` 为 `ChartSet` 的 `_id` 字段；`chartId` 为 `Chart` 的 `_id` 字段；`userId` 为 `User` 的 `_id` 字段。
 
 ### 可行性？
 
