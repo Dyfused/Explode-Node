@@ -2,7 +2,7 @@ scalar Date
 scalar NonNegativeInt
 
 type Announcement {
-  _id: ID
+  _id: String
   userId: String
   title: String
   content: [String]
@@ -27,14 +27,14 @@ type HpSetting {
 # 考级组数据
 #（包含多个考级谱）
 type AssessmentGroup {
-  _id: ID
+  _id: String
   name: String
   assessment: [Assessment]
 }
 
 # 考级谱数据
 type Assessment {
-  _id: ID
+  _id: String
   medalLevel: Int
   lifeBarLength: Float
   normalPassAcc: Float
@@ -46,7 +46,7 @@ type Assessment {
 
 # 考级谱面信息
 type AssessmentChart {
-  _id: ID
+  _id: String # 这个字段必须与 set.chart 中的某个 _id 字段相同
   set: ChartSet
 }
 
@@ -60,12 +60,13 @@ type AssessmentRecord {
 # 谱面集合
 #（包含各种难度的谱面）
 type ChartSet {
-  _id: ID
+  _id: String
   introduction: String
   coinPrice: Int
   noter: ChartNoter
   musicTitle: String
-  composerName: String
+  composerName: String,
+  playCount: Int,
   chart: [Chart]
   isGot: Boolean
   isRanked: Boolean
@@ -79,7 +80,7 @@ type ChartNoter {
 
 # 谱面
 type Chart {
-  _id: ID
+  _id: String
   difficultyClass: Int
   difficultyValue: Int
 }
@@ -96,7 +97,7 @@ type DetailedChart {
 
 # 音乐信息
 type Music {
-  _id: ID
+  _id: String
   musicName: String
   musician: Musician
 }
@@ -108,7 +109,7 @@ type Musician {
 
 # 用户信息
 type User {
-  _id: ID
+  _id: String
   username: String
   ownChart: [String]
   coworkChart: [String]
@@ -147,7 +148,7 @@ type PlayingRecord {
 }
 
 # 游玩记录
-input PlayRecord {
+input PlayRecordInput {
   mod: PlayModInput
   isAlive: Boolean
   score: Int
@@ -211,7 +212,7 @@ type AssessmentRecordWithRank {
 }
 
 type Player {
-  _id: ID
+  _id: String
   username: String
   highestGoldenMedalLevel: Int
   RThisMonth: Int
@@ -246,7 +247,7 @@ input ChartSetAndVersion {
 # refreshSet 返回值
 # （本身应该与 ChartSet 相同，但是因为 noterName 不存在于 ChartSet，所以单独拉出来）
 type Set {
-    _id: ID
+    _id: String
     isRanked: Boolean
     introduction: String
     noterName: String
@@ -273,7 +274,7 @@ type Query {
   gameSetting: GameSetting!
 
   # 考级数据
-  assessmentGroup(limit: Int, skip: Int): AssessmentGroup
+  assessmentGroup(limit: Int, skip: Int): [AssessmentGroup]
 
   # ?
   assessmentRank(
@@ -309,7 +310,7 @@ type Query {
   # ?
   refreshSet(setVersion: [ChartSetAndVersion]): Set
 
-  # 根据 ID 获取谱子
+  # 根据 String 获取谱子
   setById(_id: String): ChartSet
 
   # 根据用户名获取用户信息
@@ -319,13 +320,13 @@ type Query {
 type Mutation {
   # 考级开始前提交
   submitBeforeAssessment(
-    assessmentGroupId: ID
+    assessmentGroupId: String
     medalLevel: Int
   ): BeforePlaySubmit
 
   # 考级结束后提交
   submitAfterAssessment(
-    playRecords: [PlayRecord]
+    playRecords: [PlayRecordInput]
     randomId: String
   ): AssessmentAfterPlaySubmit
 
@@ -337,7 +338,7 @@ type Mutation {
   ): BeforePlaySubmit
 
   # 游玩后提交成绩
-  submitAfterPlay(randomId: String, playRecord: PlayRecord): AfterPlaySubmit
+  submitAfterPlay(randomId: String, playRecord: PlayRecordInput): AfterPlaySubmit
 
   # ?
   purchaseChart(chartId: String): User
