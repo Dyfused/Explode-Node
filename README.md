@@ -32,3 +32,19 @@ Dynamite 使用 GraphQL 作为其后端接口，本项目整理了所有已知�
 1. 将本项目 clone 到本地
 2. `node app`
 3. 用任意方法将游戏流量转发到当前电脑
+4. 将需要分发的数据导入到 `data` 文件夹中
+
+#### 分发数据结构
+
+- `/data/music` 音乐（加密）
+- `/data/cover` 选曲目录的曲绘（加密）
+- `/data/preview` 选曲目录的预览音乐（加密）
+- `/data/chart` 谱面（加密）
+- `/data/avatar` 用户头像
+- `/data/cover_small` 商店界面的预览曲绘
+
+## 参与项目
+
+欢迎各位佬提交，当您的 PR 首次被接受时，我们将向您发送一封 Dyfused 组织的邀请。
+
+项目中的所有代码部分遵守 WTFPL 开源；`data` 文件夹下的内容来源于 TunerGames 审核通过的社区资源，侵删。
