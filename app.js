@@ -199,6 +199,7 @@ expressDispatch.use('/download/music/encoded/', express.static('data/music'))
 expressDispatch.use('/download/chart/encoded/', express.static('data/chart'))
 expressDispatch.use('/download/preview/encoded/', express.static('data/preview'))
 expressDispatch.use('/download/avatar/256x256_jpg/', express.static('data/avatar'))
+expressDispatch.use('/download/cover/480x270_jpg/', express.static('data/cover_small'))
 expressDispatch.listen(10442)
 
 console.log("Dispatch Server Running at http://localhost:10442")
